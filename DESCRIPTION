@@ -1,10 +1,11 @@
 Package: SummaryPack
 Type: Package
-Title: Summarize and Test a set of data 
+Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Fred Kaesmann
-Maintainer: Fred Kaesmann
-Description: Does some basic summary statistics, as well as levene, ANOVA, and Tukey tests
-License: What liscense?
+Author: Who wrote it
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
 Encoding: UTF-8
 LazyData: true
