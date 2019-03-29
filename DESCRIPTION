@@ -1,10 +1,10 @@
 Package: SummaryPack
 Type: Package
-Title: Summarize and analyze 
+Title: Summarize and Test a set of data 
 Version: 0.1.0
-Author: Frederick T. Kaesmann Jr.
+Author: Fred Kaesmann
 Maintainer: github.com/ftkjr
-Description: Does some summarizing.
-License: What license is it under?
+Description: Does some basic summary statistics, as well as levene, ANOVA, and Tukey tests.
+License: What liscense?
 Encoding: UTF-8
 LazyData: true
