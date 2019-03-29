@@ -1,11 +1,10 @@
 Package: SummaryPack
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Summarize and analyze 
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Frederick T. Kaesmann Jr.
+Maintainer: github.com/ftkjr
+Description: Does some summarizing.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
