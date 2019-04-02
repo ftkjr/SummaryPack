@@ -71,13 +71,6 @@ SummaryStats <- function(observations, treatments, confidenceInterval){
   PrintSixNumSummary(observations, treatments)
   CheckNormality(observations, treatments)
 
-  # Plot it to see everything
-  par(ask = TRUE)
-  print(ggboxplot(sheet, y = "observations", x = "treatments", add = "jitter",
-                  color = "treatments", title = "For Internal Use Only"))
-  print(gghistogram(sheet, "observations", add = "mean", facet.by = "treatments",
-                    color = "treatments", title = "For Internal Use Only"))
-
   # If there's only two treatments
   if (nlevels(treatments)== 2){
     welch <- t.test(observations~treatments)
@@ -138,5 +131,11 @@ SummaryStats <- function(observations, treatments, confidenceInterval){
     }
    }
   }
+  # Plot it to see everything
+  par(ask = TRUE)
+  print(ggboxplot(sheet, y = "observations", x = "treatments", add = "jitter",
+                  color = "treatments", title = "For Internal Use Only"))
+  print(gghistogram(sheet, "observations", add = "mean", facet.by = "treatments",
+                    color = "treatments", title = "For Internal Use Only"))
  }
 }

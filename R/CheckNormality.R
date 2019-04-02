@@ -22,11 +22,9 @@ CheckNormality <- function(observations, treatments, plot = FALSE, levenetest = 
   # If there's no treatment variable then run this:
   if (missing(treatments) || nlevels(treatments) == 1){
 
-  # If treatments not entered or treatments == 1, run single dataset
   cat("\n", "Checking for Normality of single dataset:", "\n \n")
 
   # The meat and potatoes
-
   iqr <- c("IQR:", IQR(observations))
   standdev <- c("Stand Dev:", sd(observations))
 
@@ -63,8 +61,6 @@ CheckNormality <- function(observations, treatments, plot = FALSE, levenetest = 
     dataset$treatments <- as.factor(treatments)
     dataset$observations <- as.numeric(observations)
 
-
-    # tapply to calculate for each treatment
     iqr <- c("IQR:", tapply(observations, treatments, IQR))
     standdev <- c("Stand Dev:", tapply(observations, treatments, sd))
 
