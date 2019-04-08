@@ -12,9 +12,9 @@ HypothesisTest <- function(pval, confidenceInterval) {
   # Null Hypothesis test
   if (pval < confidenceInterval) {
     cat("\n", sprintf("t-test pval (%f) < (%s) confidence interval", pval, confidenceInterval))
-    cat("\n", "REJECT Null Hypothesis")
+    cat("\n REJECT Null Hypothesis \n")
   } else if (pval > confidenceInterval) {
     cat("\n", sprintf("t-test pval (%f) > (%s) confidence interval", pval, confidenceInterval))
-    cat("\n", "CANNOT REJECT Null Hypothesis")
+    cat("\n CANNOT REJECT Null Hypothesis")
   }
 }

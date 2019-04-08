@@ -43,10 +43,10 @@ DistMod <- function(observation, treatments, plot = TRUE){
 
   # Log of the observations
   logdata <- log(observation) # Take the log
-  lagiqr <- IQR(logdata) # Inter Quartile Range
-  lagsd <- sd(logdata) # Standard Deviation
-  lagcalc <- lagiqr/lagsd # IQR/SD
-  lagrow <-  c("Log:", lagcalc) # labeled and stored
+  logiqr <- IQR(logdata) # Inter Quartile Range
+  logsd <- sd(logdata) # Standard Deviation
+  logcalc <- logiqr/logsd # IQR/SD
+  logrow <-  c("Log:", logcalc) # labeled and stored
 
 
   if (plot == TRUE){
@@ -68,17 +68,17 @@ DistMod <- function(observation, treatments, plot = TRUE){
     print("Original data is most normal")
     obsrow <- c(obsrow, "<-")
     sqrow <- c(sqrow,"  ")
-    lagrow <- c(lagrow,"  ")
+    logrow <- c(logrow,"  ")
   } else if (abs(1.34-sqcalc)<abs(1.34-obscalc) & abs(1.34-sqcalc)<abs(1.34-lagcalc)) {
     print("Square rooted data is most normal")
     obsrow <- c(obsrow, "  ")
     sqrow <- c(sqrow,"<-")
-    lagrow <- c(lagrow,"  ")
+    logrow <- c(logrow,"  ")
   } else {
     print("Log of data is most normal")
     obsrow <- c(obsrow, "  ")
     sqrow <- c(sqrow,"  ")
-    lagrow <- c(lagrow,"<-")
+    logrow <- c(logrow,"<-")
   }
 
   } else {
@@ -98,14 +98,14 @@ DistMod <- function(observation, treatments, plot = TRUE){
     sqrow <- c("Square root:",sqcalc) # labeled and stored
 
     # Log of the observations
-    lagiqr <- tapply(log(observation), treatments, IQR) # Inter Quartile Range
-    lagsd <- tapply(log(observation), treatments, sd) # Standard Deviation
-    lagcalc <- lagiqr/lagsd # IQR/SD
-    lagrow <-  c("Log:", lagcalc) # labeled and stored
+    logiqr <- tapply(log(observation), treatments, IQR) # Inter Quartile Range
+    logsd <- tapply(log(observation), treatments, sd) # Standard Deviation
+    logcalc <- logiqr/logsd # IQR/SD
+    logrow <-  c("Log:", logcalc) # labeled and stored
   }
 
   # Group everything as a dataframe
-  thegroup <- as.data.frame(rbind(obsrow,sqrow,lagrow))
+  thegroup <- as.data.frame(rbind(obsrow,sqrow,logrow))
 
   # Print all nice like
   print(thegroup, row.names = F)
