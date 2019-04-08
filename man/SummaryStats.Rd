@@ -17,8 +17,10 @@ SummaryStats(observations, treatments, confidenceInterval)
 \arguments{
   \item{observations}{Your numeric variable, the variable being measured
 %%     ~~Describe \code{x} here~~
-} \item{treatments}{Your factors, the variables by which you are separating your observations
-} \item{confidenceInterval}{Should be self explanatory. If this argument isn't entered it assumes alpha = .05 or a 95\% interval }
+}
+\item{treatments}{Your factors, the variables by which you are separating your observations}
+\item{confidenceInterval}{Should be self explanatory. If this argument isn't entered it assumes alpha = .05 or a 95\% interval}
+\item{is.nonparametric}{If TRUE runs a Kruskal-Wallis}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -32,6 +34,8 @@ SummaryStats(observations, treatments, confidenceInterval)
 \item{t-test}{If nlevels of treatment == 1}
 \item{Welch test}{If nlevels of treatment == 2}
 \item{Levene test}{If nlevels of treatment > 2}
+\item{oneway test}{If Levene Test returns heteroscedasticity of treatments}
+\item{Kruskal-Wallis}(If data is nonparametric, runs a Kruskal-Wallis Test)
 \item{ANOVA test}{If applicable by Levene values}
 \item{TukeyHSD}{If applicable by ANOVA values}
 %%  ~Describe the value returned

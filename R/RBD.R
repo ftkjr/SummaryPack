@@ -1,7 +1,7 @@
 # RBD(Observations, treatment, block, confidenceInterval)
 # Frederick T. Kaesmann Jr.  3/20/19
 
-RBD <- function(observations, treatments, block, confidenceInterval, LeveneBlock = TRUE, plot = TRUE){
+RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE){
   # Performs a Randomized Block Design
   #
   # Args: observations
@@ -30,10 +30,10 @@ RBD <- function(observations, treatments, block, confidenceInterval, LeveneBlock
   library(SummaryPack)
 
   #Checking inputs
-  dataset <- as.data.frame(cbind(treatments,observations,block))
-  dataset$observations <- as.numeric(observations)
-  dataset$treatments <- as.factor(treatments)
-  dataset$block <- as.factor(block)
+  observations <- as.numeric(observations)
+  treatments <- as.factor(treatments)
+  block <- as.factor(block)
+  dataset <- cbind.data.frame(treatments,observations,block)
 
   cat("%%%%%%%%%%%%%%% Begin Randomized BLock Design Test %%%%%%%%%%%%%%%%%%%", "\n \n")
 
@@ -54,64 +54,31 @@ RBD <- function(observations, treatments, block, confidenceInterval, LeveneBlock
 
   # Check Normality of observations by treatment
   cat("Observations by Treatments")
-  print(CheckNormality(observations, treatments))
+  CheckNormality(observations, treatments)
   cat("\n",
       "-------------------------------------------------------------------", "\n \n")
 
   # Check Normality of observations by block
   cat("Observations by Block")
-  print(CheckNormality(observations, block))
-
-  # If LeveneBlock==TRUE run levene test on observations by block
-  if (LeveneBlock == TRUE){
-    cat("\n", "-------------------------------------------------------------------",
+  CheckNormality(observations, block)
+  cat("\n", "-------------------------------------------------------------------",
         "\n")
-    levyBlock <- levene.test(observations, block)
-    pvalLevyBlock <- levyBlock$p.value
-    cat("Levene Test by block because you asked so nicely", "\n")
-    print(levyBlock)
-    cat("Null: Homoscedasticity of Variance", "\n")
-    cat("Alternative: Not Homoscedasticity of Variance, aka Heteroscedasticity", "\n")
-    print(HypothesisTest(pvalLevyBlock, confidenceInterval))
-    cat("\n",
-        "-------------------------------------------------------------------", "\n \n")
-  }
 
-  # Levene test for homoscedasticity of variance OF TREATMENTS
-  levyTreat <- levene.test(observations, treatments)
-  pvalLevyTreat <- levyTreat$p.value
-  print("Levene Test by Treatment:")
-  print(levyTreat)
-  cat("\n")
-  cat("Null: Homoscedasticity of Variance", "\n")
-  cat("Alternative: Not Homoscedasticity of Variance, aka Heteroscedasticity", "\n")
-  print(HypothesisTest(pvalLevyTreat, confidenceInterval))
+  AnalyzeVariance(observations, treatments, confidenceInterval, block = block,
+                  ANOVA = FALSE, plot = FALSE)
+
   cat("\n", "-------------------------------------------------------------------",
       "\n")
 
-  # If Levene test p value is less than confidence interval,
-  # then assumptions from anova not met and therefore inapplicaple
-  if (levyTreat$p.value < confidenceInterval){
-    cat("\n", "Variances significantly different across treatments")
-    cat("\n", "therefore assumptions for ANOVA not met")
-    cat("\n", "-------------------------------------------------------------------",
-        "\n")
-
-  } else if (levyTreat$p.value < confidenceInterval){
-    cat("\n", "Variances significantly different across blocks")
-    cat("\n", "therefore assumptions for ANOVA not met")
-    cat("\n", "-------------------------------------------------------------------",
-        "\n")
-  }
-
   # ANOVA Table
-  cat("Checking for interations between block and treatments")
+  cat("Checking for interations between block and treatments \n")
   anov <- lm(observations ~ treatments * block)
   anovaTable <- anova(anov)
   print(anovaTable)
-  print(HypothesisTest(anovaTable$`Pr(>F)`[3], confidenceInterval))
-  cat("Null: Homogeniety of means across treatments", "\n")
-  cat("Alternative: Heterogeneity of means across treatments", "\n")
+  pvalTreatmentbyBlock <- anovaTable$`Pr(>F)`[3]
+  cat("Null: No effect between treatments and block", "\n")
+  cat("Alternative: Block has an affect on treatments", "\n")
+  HypothesisTest(pvalTreatmentbyBlock, confidenceInterval)
   cat("\n", "-------------------------------------------------------------------",
       "\n")
 
@@ -124,24 +91,34 @@ RBD <- function(observations, treatments, block, confidenceInterval, LeveneBlock
     print(anovaTable)
     cat("Null: Homogeniety of means across treatments", "\n")
     cat("Alternative: Heterogeneity of means across treatments", "\n")
-    print(HypothesisTest(pvalTreatments, confidenceInterval))
+    HypothesisTest(pvalTreatments, confidenceInterval)
 
 
   # Tukey table if applicable
   if ((pvalTreatments < confidenceInterval) || (pvalBlock < confidenceInterval) ){
-    cat("P value less than confidence interval", "\n")
+    if (pvalTreatments < confidenceInterval) {
+      cat("P value of Treatments less than confidence interval", "\n")
+      HypothesisTest(pvalTreatments, confidenceInterval)
+    }
+    if (pvalBlock < confidenceInterval) {
+      cat("P value of Blocks less than confidence interval", "\n")
+      HypothesisTest(pvalBlock, confidenceInterval)
+    }
     cat("\n", "-------------------------------------------------------------------",
         "\n")
     cat("Tukey table provided to evaluate which means are different", "\n")
-    stuff <- aov(observations ~ treatments + block)
-    tukeTable <- TukeyHSD(stuff)
+    twoway <- aov(observations ~ treatments + block)
+    tukeTable <- TukeyHSD(twoway)
     print(tukeTable)
 
   if (plot == TRUE) {
     plot(tukeTable)
     }
   }
-  }#closeANOVA
+  } else if (anovaTable$`Pr(>F)`[3] < confidenceInterval){
+    cat("\n Cannot make accurate predictions abouttreatment means \n",
+       "if there is a statistically significant affect")
+  }
   if (plot == TRUE){
     # Plot it
     par(ask=TRUE)
@@ -160,9 +137,9 @@ RBD <- function(observations, treatments, block, confidenceInterval, LeveneBlock
                     color = "treatments", palette = "npc",
                     xlab = "observations~treatments", title = "For Internal Use Only"))
     print(ggboxplot(dataset, x = "block", y = "observations", add = "jitter",
-                    color = "treatments", palette = "npc",
+                    color = "block", palette = "npc",
                     title = "For Internal Use only"))
-    print(ggboxplot(dataset, x = "block", y = "observations", add = "jitter",
+    print(ggboxplot(dataset, x = "treatments", y = "observations", #add = "jitter",
                     color = "block", palette = "npc",
                     title = "For Internal Use Only"))
   }
