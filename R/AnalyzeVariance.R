@@ -2,7 +2,8 @@
 # Frederick T. Kaesmann Jr.
 
 AnalyzeVariance <- function(observations, treatments, confidenceInterval,
-                            block = NULL, ANOVA = TRUE, is.nonparametric = FALSE,
+                            block = NULL, ANOVA = TRUE,
+                            post.hoc = NULL, is.nonparametric = FALSE,
                             plot = TRUE){
   # Runs Levene Test(s), then does one way or two way ANOVA
   #
@@ -19,6 +20,7 @@ AnalyzeVariance <- function(observations, treatments, confidenceInterval,
 
   library(lawstat)
   library(MASS)
+  library(dunn.test)
   library(SummaryPack)
 
   observations <- as.numeric(observations)
@@ -63,6 +65,13 @@ AnalyzeVariance <- function(observations, treatments, confidenceInterval,
     cat("\n", "Null Hypothesis: Means equal across treatments.")
     cat("\n", "Alternative: At least one set of treatment means is different. \n")
     HypothesisTest(pvalKruskal, confidenceInterval)
+    if (pvalKruskal < confidenceInterval){
+      if (post.hoc == "wilcoxon"){
+        pairwise.wilcox.test(observations, treatments)
+      } else if (post.hoc == "dunn"){
+        dunn.test(observations, treatments, kw = FALSE, method = "holm")
+      }
+    }
 
   } else if (pvalLevy < confidenceInterval){
     cat("\n Data Heteroscedastic, running oneway.test \n")

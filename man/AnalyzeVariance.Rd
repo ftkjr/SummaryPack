@@ -22,6 +22,7 @@ Numeric vector of response variables
 \item{block}{An additional vector of factors, optional}
 \item{ANOVA}{If true, prints ANOVA tests, if false it only prints Levene tests}
 \item{is.nonparametric}{If true, runs Kruskal-Wallis}
+\item{post.hoc}{Accepts either "Wilcoxon" for pairwise Wilcoxon, or "Dunn" for Dunn's test}
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~

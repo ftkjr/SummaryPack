@@ -2,7 +2,7 @@
 # Fred Kaesmann Jr Date: 2019-03-04
 
 SummaryStats <- function(observations, treatments, confidenceInterval,
-                         is.nonparametric = FALSE, plot = TRUE){
+                         post.hoc = "NULL", plot = TRUE){
   # Computes some basic summary statistics, runs a Levene test to determine
   # if ANOVA assumptions are met, if levene p > confidenceInterval then it runs an ANOVA test,
   # and a TukeyHSD test if ANOVA p value is less than the confidence interval.
@@ -22,6 +22,7 @@ SummaryStats <- function(observations, treatments, confidenceInterval,
   library(lawstat)
   library(MASS)
   library(ggpubr)
+  library(dunn.test)
   library(SummaryPack)
 
 
@@ -70,32 +71,44 @@ SummaryStats <- function(observations, treatments, confidenceInterval,
   } else {
 
     if (plot == FALSE){
-      if (is.nonparametric == TRUE){
-      AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
-                      is.nonparametric = TRUE, plot = FALSE)
-      } else if (is.nonparametric == FALSE){
         AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
                         plot = FALSE)
-      }
-
     } else {
-      if (is.nonparametric == TRUE){
-        AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
-                        is.nonparametric = TRUE)
-      } else {
-        AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval)
-      }
+      AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval)
     }
+
+    # Run nonparametric Kruskal-Wallis test
+      if (plot == TRUE){
+        if (post.hoc == "wilcoxon" || post.hoc == "Wilcoxon"){
+          AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
+                          is.nonparametric = TRUE, post.hoc = "wilcoxon")
+        } else if (post.hoc == "dunn" || post.hoc == "Dunn"){
+          AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
+                          is.nonparametric = TRUE, post.hoc = "dunn")
+        }
+      } else {
+        if (post.hoc == "wilcoxon" || post.hoc == "Wilcoxon"){
+          AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
+                          is.nonparametric = TRUE, post.hoc = "wilcoxon",
+                          plot = FALSE)
+        } else if (post.hoc == "dunn" || post.hoc == "Dunn"){
+          AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
+                          is.nonparametric = TRUE, post.hoc = "dunn",
+                          plot = FALSE)
+        }      }
   }
 
   # Plot it to see everything
   if (plot == TRUE){
   par(ask = TRUE)
-  print(ggboxplot(sheet, y = "observations", x = "treatments", add = "jitter",
-                  color = "treatments", title = "For Internal Use Only"))
-  print(gghistogram(sheet, "observations", add = "mean", bins = 30,
+    print(gghistogram(sheet, "observations", add = "mean", bins = 30,
+                      fill = "red", title = "For Internal Use Only"))
+    print(gghistogram(sheet, "observations", add = "mean", bins = 30,
                     facet.by = "treatments", fill = "treatments",
-                    title = "For Internal Use Only"))
+                    palette = "npc", title = "For Internal Use Only"))
+    print(ggboxplot(sheet, y = "observations", x = "treatments", add = "jitter",
+                  color = "treatments", title = "For Internal Use Only"))
+
   }
   }
 }
