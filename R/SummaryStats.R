@@ -79,7 +79,7 @@ SummaryStats <- function(observations, treatments, confidenceInterval,
 
     # Run nonparametric Kruskal-Wallis test
       if (plot == TRUE){
-        if (post.hoc == "wilcoxon" || post.hoc == "Wilcoxon"){
+        if (is.null(post.hoc) || post.hoc == "wilcoxon" || post.hoc == "Wilcoxon"){
           AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
                           is.nonparametric = TRUE, post.hoc = "wilcoxon")
         } else if (post.hoc == "dunn" || post.hoc == "Dunn"){
@@ -87,7 +87,7 @@ SummaryStats <- function(observations, treatments, confidenceInterval,
                           is.nonparametric = TRUE, post.hoc = "dunn")
         }
       } else {
-        if (post.hoc == "wilcoxon" || post.hoc == "Wilcoxon"){
+        if (is.null(post.hoc) || post.hoc == "wilcoxon" || post.hoc == "Wilcoxon"){
           AnalyzeVariance(observations, treatments, block = NULL, confidenceInterval,
                           is.nonparametric = TRUE, post.hoc = "wilcoxon",
                           plot = FALSE)

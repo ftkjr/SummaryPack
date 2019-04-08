@@ -66,9 +66,9 @@ AnalyzeVariance <- function(observations, treatments, confidenceInterval,
     cat("\n", "Alternative: At least one set of treatment means is different. \n")
     HypothesisTest(pvalKruskal, confidenceInterval)
     if (pvalKruskal < confidenceInterval){
-      if (post.hoc == "wilcoxon"){
+      if (is.null(post.hoc) || post.hoc == "wilcoxon" || post.hoc == "Wilcoxon"){
         pairwise.wilcox.test(observations, treatments)
-      } else if (post.hoc == "dunn"){
+      } else if (post.hoc == "dunn" || post.hoc == "Dunn"){
         dunn.test(observations, treatments, kw = FALSE, method = "holm")
       }
     }
