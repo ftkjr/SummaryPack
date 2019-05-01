@@ -20,7 +20,6 @@ SummaryStats(observations, treatments, confidenceInterval)
 }
 \item{treatments}{Your factors, the variables by which you are separating your observations}
 \item{confidenceInterval}{Should be self explanatory. If this argument isn't entered it assumes alpha = .05 or a 95\% interval}
-\item{is.nonparametric}{If TRUE runs a Kruskal-Wallis}
 \item{post.hoc}{Accepts either "Wilcoxon" for pairwise Wilcoxon, or "Dunn" for Dunn's test}
 }
 }
@@ -37,7 +36,9 @@ SummaryStats(observations, treatments, confidenceInterval)
 \item{Welch test}{If nlevels of treatment == 2}
 \item{Levene test}{If nlevels of treatment > 2}
 \item{oneway test}{If Levene Test returns heteroscedasticity of treatments}
-\item{Kruskal-Wallis}(If data is nonparametric, runs a Kruskal-Wallis Test)
+\item{Kruskal-Wallis}{If data is nonparametric, runs a Kruskal-Wallis Test}
+\item{Pairwise Wilcox test}{If Kruskal-Wallis returns a significant p value, returns Pairwise Wilcox if post.hoc = NULL or "Wilcoxon"}
+\item{Dunn's Test}{If Kruskal-Wallis returns a significant p value, returns Dunn's Test if post.hoc = "Dunn"}
 \item{ANOVA test}{If applicable by Levene values}
 \item{TukeyHSD}{If applicable by ANOVA values}
 %%  ~Describe the value returned
