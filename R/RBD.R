@@ -1,7 +1,7 @@
 # RBD(Observations, treatment, block, confidenceInterval)
 # Frederick T. Kaesmann Jr.  3/20/19
 
-RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE){
+RBD <- function(observations, treatments, block, confidenceInterval = 0.05, plot = TRUE){
   # Performs a Randomized Block Design
   #
   # Args: observations
@@ -23,10 +23,13 @@ RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE
   #         ggboxplot(dataset, x = "block", y = "observations", color = "treatments")
   #
 
-  # Add requisite libraries
-  library(ggpubr)
+  # Add requisite libraries, install if necessary
+  if (!require("lawstat")) install.packages("lawstat")
   library(lawstat)
+  if (!require("MASS")) install.packages("MASS")
   library(MASS)
+  if(!require("ggpubr")) install.packages("ggpubr")
+  library(ggpubr)
   library(SummaryPack)
 
   #Checking inputs
@@ -39,9 +42,8 @@ RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE
 
 
   # Condfidence interval check
-  if (missing(confidenceInterval) || !missing(confidenceInterval)){
-    confidenceInterval <- CheckConfidence(confidenceInterval)
-  }
+  confidenceInterval <- CheckConfidence(confidenceInterval)
+
   cat("Your confidence interval is:", "\n",
       sprintf("%s, (%s percent)", confidenceInterval, (100-confidenceInterval*100)))
   cat("\n",
@@ -49,17 +51,15 @@ RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE
 
   # Basic Number Summary
   PrintSixNumSummary(observations, treatments, block)
-  cat("\n",
-      "-------------------------------------------------------------------", "\n \n")
 
   # Check Normality of observations by treatment
-  cat("Observations by Treatments")
+  cat("\n Observations by Treatments \n")
   CheckNormality(observations, treatments)
   cat("\n",
       "-------------------------------------------------------------------", "\n \n")
 
   # Check Normality of observations by block
-  cat("Observations by Block")
+  cat("Observations by Block \n")
   CheckNormality(observations, block)
   cat("\n", "-------------------------------------------------------------------",
         "\n")
@@ -67,11 +67,8 @@ RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE
   AnalyzeVariance(observations, treatments, confidenceInterval, block = block,
                   ANOVA = FALSE, plot = FALSE)
 
-  cat("\n", "-------------------------------------------------------------------",
-      "\n")
-
   # ANOVA Table
-  cat("Checking for interations between block and treatments \n")
+  cat("\n", "Checking for interations between block and treatments \n")
   anov <- lm(observations ~ treatments * block)
   anovaTable <- anova(anov)
   print(anovaTable)
@@ -79,8 +76,8 @@ RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE
   cat("Null: No effect between treatments and block", "\n")
   cat("Alternative: Block has an affect on treatments", "\n")
   HypothesisTest(pvalTreatmentbyBlock, confidenceInterval)
-  cat("\n", "-------------------------------------------------------------------",
-      "\n")
+  cat("\n \n", "-------------------------------------------------------------------",
+      "\n \n")
 
   # Insert something here to remove the Treatments:Block portion of ANOVA table if the T:B pvalue cannot reject null hypothesis
   if (anovaTable$`Pr(>F)`[3] > confidenceInterval){
@@ -105,7 +102,7 @@ RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE
       HypothesisTest(pvalBlock, confidenceInterval)
     }
     cat("\n", "-------------------------------------------------------------------",
-        "\n")
+        "\n \n")
     cat("Tukey table provided to evaluate which means are different", "\n")
     twoway <- aov(observations ~ treatments + block)
     tukeTable <- TukeyHSD(twoway)
@@ -133,13 +130,17 @@ RBD <- function(observations, treatments, block, confidenceInterval, plot = TRUE
     print(gghistogram(dataset, x = "observations", add = "mean", bins = 30,
                       facet.by = "block", color = "block",
                       title = "For Internal Use Only"))
+    # Box Plots
     print(ggboxplot(dataset, x = "treatments", y = "observations", add = "jitter",
                     color = "treatments", palette = "npc",
                     xlab = "observations~treatments", title = "For Internal Use Only"))
     print(ggboxplot(dataset, x = "block", y = "observations", add = "jitter",
                     color = "block", palette = "npc",
                     title = "For Internal Use only"))
-    print(ggboxplot(dataset, x = "treatments", y = "observations", #add = "jitter",
+    print(ggboxplot(dataset, x = "block", y = "observations", add = "jitter",
+                    color = "treatments", palette = "npc",
+                    title = "For Internal Use only"))
+    print(ggboxplot(dataset, x = "treatments", y = "observations", add = "jitter",
                     color = "block", palette = "npc",
                     title = "For Internal Use Only"))
   }

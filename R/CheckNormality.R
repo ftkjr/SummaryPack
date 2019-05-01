@@ -10,10 +10,14 @@ CheckNormality <- function(observations, treatments, plot = FALSE, levenetest = 
   # Output: Prints the Inter Quartile Range, Standard Deviation, then the IQR/SD
   #
 
-  library(SummaryPack)
+  # Add requisite libraries, install the packages if necessary
+  if (!require("lawstat")) install.packages("lawstat")
   library(lawstat)
+  if (!require("MASS")) install.packages("MASS")
   library(MASS)
+  if(!require("ggpubr")) install.packages("ggpubr")
   library(ggpubr)
+  library(SummaryPack)
 
   # Let's make sure it's the right kind of variable
   observations <- as.numeric(observations)
