@@ -2,7 +2,8 @@
 # Frederick T. Kaesmann Jr.
 
 SingleSetSummary <- function(observations,
-                             confidenceInterval = 0.05, plot = TRUE){
+                             confidenceInterval = 0.05,
+                             plot = TRUE){
   # Prints a basic set of statistic tests
   # for a single set of observations
   #
@@ -17,12 +18,15 @@ SingleSetSummary <- function(observations,
   library(ggpubr)
   if (!require("magrittr")) install.packages("magrittr")
   library(magrittr)
+  if (!require("tibble")) install.packages("tibble")
+  library(tibble)
 
-  observations <- as.numeric(observations)
-  sheet <- as.data.frame(observations)
+  observations %<>% as.numeric()
+  sheet <- tibble(observations)
 
   # Condfidence interval check
-    confidenceInterval <- CheckConfidence(confidenceInterval)
+  confidenceInterval %<>% CheckConfidence()
+
   cat("Your confidence interval is:", "\n",
       sprintf("%s, (%s percent)", confidenceInterval, (100-confidenceInterval*100)))
 
@@ -30,28 +34,26 @@ SingleSetSummary <- function(observations,
       "-------------------------------------------------------------------",
       "\n \n")
 
-  observations %>%
-    PrintSixNumSummary() %>% # min, max, mean, sd, etc
-    CheckNormality() # Is it normal?
+  # Min, Q1, Median, Mean, Q3, Max
+  observations %>% PrintSixNumSummary()
+
+  # Normal Data?
+  observations %>%  CheckNormality()
 
   cat("\n",
       "-------------------------------------------------------------------",
       "\n \n")
 
   # Single Variable t.test
-  t.test(observations)
-  print(ttest)
+  ttest <- t.test(observations)
+  ttest %>% print()
 
   # Null Hypothesis test
-  pvalTtest <- ttest$p.value
-  HypothesisTest(pvalTtest, confidenceInterval)
+  ttest$p.value %>%  HypothesisTest(confidenceInterval)
 
   # Plot your data
   if (plot == TRUE){
     par(ask=TRUE)
-    print(gghistogram(sheet, "observations", add = "mean", bins = 30,
-                    fill = "red", title = "For Internal Use Only"))
-    print(ggboxplot(sheet, y = "observations", add = "jitter",
-                    color = "red", title = "For Internal Use Only"))
+    SummaryPlots(observations)
   }
 }
