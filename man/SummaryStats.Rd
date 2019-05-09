@@ -22,7 +22,6 @@ SummaryStats(observations, treatments, confidenceInterval)
 \item{confidenceInterval}{Should be self explanatory. If this argument isn't entered it assumes alpha = .05 or a 95\% interval}
 \item{post.hoc}{Accepts either "Wilcoxon" for pairwise Wilcoxon, or "Dunn" for Dunn's test}
 }
-}
 \details{
 %%  ~~ If necessary, more details than the description above ~~
 }

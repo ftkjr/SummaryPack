@@ -1,7 +1,7 @@
 # CheckNormality(observations, treatment)
 # Fred Kaesmann Jr  2019 - 03 - 04
 
-CheckNormality <- function(observations, treatments, plot = FALSE, levenetest = FALSE){
+CheckNormality <- function(observations, treatments, plot = FALSE){
   # Checks how normal the provided data is by IQR/SD, Boxplot, and Histogram
   #
   #
@@ -17,11 +17,13 @@ CheckNormality <- function(observations, treatments, plot = FALSE, levenetest = 
   library(MASS)
   if(!require("ggpubr")) install.packages("ggpubr")
   library(ggpubr)
+  if (!require("tibble")) install.packages("tibble")
+  library(tibble)
   library(SummaryPack)
 
   # Let's make sure it's the right kind of variable
-  observations <- as.numeric(observations)
-  numbers <- as.data.frame(observations)
+  observations %<>% as.numeric()
+  numbers <- tibble(observations)
 
   # If there's no treatment variable then run this:
   if (missing(treatments) || nlevels(treatments) == 1){
@@ -36,7 +38,8 @@ CheckNormality <- function(observations, treatments, plot = FALSE, levenetest = 
   normalish <- c("IQR/Sigma:", IQR(observations)/sd(observations))
 
   # Combine them into a data frame
-  numberset <- as.data.frame(rbind(iqr,standdev,normalish))
+  numberset <- tibble("Normal?" = rbind(iqr,standdev,normalish))
+  colnames(numberset) <- NULL
 
   # Print it
   print(numberset, row.names = F)
@@ -76,12 +79,6 @@ CheckNormality <- function(observations, treatments, plot = FALSE, levenetest = 
 
     # Print that ish
     print(numberset, row.names = F)
-
-    if (levenetest == TRUE) {
-
-      cat("\n", "Running a Levene Test because you asked:", "\n \n")
-      print(levene.test(observations, treatments))
-    }
 
     if (plot == TRUE){
     par(ask = TRUE)
