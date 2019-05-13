@@ -5,9 +5,11 @@ SummaryStats <- function(observations, treatments,
                          confidenceInterval = 0.05,
                          post.hoc = NULL,
                          is.nonparametric = FALSE,
+                         plot.ANOVA = TRUE,
                          plot = TRUE){
   # Computes some basic summary statistics, runs a Levene test to determine
-  # if ANOVA assumptions are met, if levene p > confidenceInterval then it runs an ANOVA test,
+  # if ANOVA assumptions are met,
+  # if levene p > confidenceInterval then it runs an ANOVA test,
   # and a TukeyHSD test if ANOVA p value is less than the confidence interval.
   #
   # Args:
@@ -75,6 +77,10 @@ SummaryStats <- function(observations, treatments,
   PrintSixNumSummary(observations, treatments)
   CheckNormality(observations, treatments)
 
+  cat("\n",
+      "-------------------------------------------------------------------",
+      "\n \n")
+
   # If there's only two treatments run two sample t.test
   if (nlevels(treatments) == 2){
     if (is.nonparametric == TRUE){
@@ -93,7 +99,7 @@ SummaryStats <- function(observations, treatments,
 
   } else {
     # Run ANOVA or One Way depending on Levene P-value
-    if (plot == FALSE){
+    if (plot.ANOVA == FALSE || plot == FALSE){
         ANOVATableandTest(observations, treatments,
                           confidenceInterval = confidenceInterval,
                           plot = FALSE)
