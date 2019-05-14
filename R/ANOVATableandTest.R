@@ -24,6 +24,9 @@ ANOVATableandTest <- function(observations, treatments,
   if (is.null(block)){
     # Is data Homoscedastic or Heteroscedastic
     LeveneTreatmentPvalue <- LeveneTreatments(observations, treatments)
+    cat("\n \n",
+        "-------------------------------------------------------------------",
+        "\n \n")
 
     # If data is Homoscedastic run aov()
     if (LeveneTreatmentPvalue > confidenceInterval){
@@ -34,8 +37,8 @@ ANOVATableandTest <- function(observations, treatments,
       cat("\n", "Null Hypothesis: Means equal across treatments.")
       cat("\n",
           "Alternative: At least one set of treatment means is different. \n")
-      ANOVA$`Pr(>F)`[1] %>%
-        HypothesisTest(confidenceInterval)
+      ANOVA$`Pr(>F)`[1] %>% HypothesisTest(confidenceInterval)
+
       if (plot == TRUE) plot(Ano) # Plot ANOVA data
 
       if (ANOVA$`Pr(>F)`[1] < confidenceInterval){
@@ -66,6 +69,16 @@ ANOVATableandTest <- function(observations, treatments,
 
     # Make sure this is a factor!
     block %<>% as.factor()
+
+    if (nlevels(block) == 2){
+      cat("\n",
+          "To use RBD effectively, block should have more than two levels",
+          "\n",
+          "Running ANOVA as observations ~ treatments")
+      ANOVATableandTest(observations, treatments,
+                        confidenceInterval = confidenceInterval)
+
+    } else {
 
     # Testing interaction
     cat("\n", "Checking for interations between block and treatments \n")
@@ -100,7 +113,7 @@ ANOVATableandTest <- function(observations, treatments,
 
       # If a set of means is different across either treatments or block,
       # print a Tukey Table
-
+}
         if (pvalTreatments < confidenceInterval){
           cat("P value of Treatments less than confidence interval", "\n")
           pvalTreatments %>% HypothesisTest(confidenceInterval)
@@ -122,5 +135,6 @@ ANOVATableandTest <- function(observations, treatments,
         # Then plot it
         if (plot == TRUE) plot(tukeTable)
     }
+
 }
 }

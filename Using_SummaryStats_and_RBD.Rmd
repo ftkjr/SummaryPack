@@ -1,0 +1,51 @@
+---
+title: "Using SummaryStats and RBD"
+author: "Fred Kaesmann"
+date: "May 9, 2019"
+output: pdf_document
+---
+
+# What is SummaryPack
+
+SummaryPack is a set of functions developed to assist the analysis of
+assigned homework and project from MAT 342 Spring 2019 
+
+# SummaryStats()
+
+
+## To do a t.test on a single set of observations
+```{r SummaryStats, eval=FALSE}
+SummaryStats(observations)
+```
+
+## To do a two sample t.test on a set of observations
+
+In this case, treatments has to be two factors
+```{r, eval=FALSE}
+SummaryStats(observations, treatments)
+```
+ 
+
+## To do a one way ANOVA 
+It's the same as above
+except in this case treatments has to have three or more factors
+```{r, eval=FALSE}
+SummaryStats(observations, treatments)
+```
+
+
+## For nonparametric data
+If the Kruskal-Wallis test is significant, this will run Dunns test
+```{r, eval=FALSE}
+SummaryStats(observations, treatments, post.hoc = "Dunn", is.nonparametric = TRUE)
+```
+
+# RBD
+## For the projects requiring two way ANOVAs
+In this case, treatments should have three or more factors
+```{r RBD, eval=FALSE}
+RBD(observations, treatments, block)
+```
+
+
+
